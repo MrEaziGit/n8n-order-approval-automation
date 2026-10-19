@@ -1,0 +1,368 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2039574c-3fd0-4ac3-a19f-ad2a5bc2d38f",
+              "leftValue": "={{$json.body.status}}",
+              "rightValue": "approved",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        464,
+        96
+      ],
+      "id": "f2f9d104-e287-43b7-bca9-9fff80e6ae54",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b37dd55c-a902-4b2d-a75a-2a2923ad3f57",
+              "name": "=customer_name",
+              "value": "={{$json.body.customer_name}}",
+              "type": "string"
+            },
+            {
+              "id": "49ffae13-1d54-44d9-8cc2-c66c5483c0de",
+              "name": "=product",
+              "value": "={{$json.body.product}}",
+              "type": "string"
+            },
+            {
+              "id": "577fb869-3a20-4c20-9212-e69510fba95b",
+              "name": "=status",
+              "value": "={{$json.body.status }}",
+              "type": "string"
+            },
+            {
+              "id": "3b86be23-2729-4276-a519-5a82d0b7225f",
+              "name": "=customer_mail",
+              "value": "={{$json.body.customer_mail}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        688,
+        0
+      ],
+      "id": "0d037b13-1cdf-482a-97f2-58611681b69f",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.customer_mail}}",
+        "subject": "your order has been accepted ",
+        "message": "=\n<h2>Order Approved</h2>\n\n<p>Hello {{$json.customer_name}},</p>\n\n<p>Your order for <strong>{{$json.product}}</strong> has been approved.</p>\n\n<p>Thank you for your order.</p>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        912,
+        0
+      ],
+      "id": "88dec54d-cb72-4aa5-8f55-5c0f2bb96975",
+      "name": "Send a message",
+      "webhookId": "72a5d831-5685-4661-b634-7e522659a02d"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "3f0abaea-0ee8-4083-a6f5-dc52e903f9b9",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        96
+      ],
+      "id": "b1e66f87-8a91-4c21-a9ba-632551eb7154",
+      "name": "Webhook",
+      "webhookId": "3f0abaea-0ee8-4083-a6f5-dc52e903f9b9"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.body.customer_mail}}",
+        "subject": "Your order has been rejected ",
+        "message": "=<h2>Order Update</h2>\n\n<p>Hello {{$json.customer_name}},</p>\n\n<p>Unfortunately, your order for <strong>{{$json.product}}</strong> has been rejected.</p>\n\n<p>If you believe this was a mistake, please contact our support team for assistance.</p>\n\n<p>Thank you.</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        912,
+        192
+      ],
+      "id": "0cec77eb-26a5-4535-8597-dad67048e70d",
+      "name": "Send a message1",
+      "webhookId": "c9de15e8-3bad-4ed1-ad44-f1c2eeb60aa8"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9162aa59-4e81-486e-9d16-6adef382ebc8",
+              "leftValue": "={{$json.body.status === 'rejected'}}",
+              "rightValue": "={{ $json.body.status === 'rejected' }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        192
+      ],
+      "id": "34513416-c632-4e2d-bdcd-96cfce405643",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b784fd1b-0dd7-466a-b78d-c12b68fc3ed1",
+              "leftValue": "={{ $json.body.customer_mail }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        96
+      ],
+      "id": "5d1ca1a9-f952-4535-8067-88728071b636",
+      "name": "Validate Customer Email"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0e44cab-da60-457b-b92e-b3955b3fced9",
+              "name": "=Invalid status",
+              "value": "={{ $json.body.status }}",
+              "type": "string"
+            },
+            {
+              "id": "03c368e6-eb2b-4f7e-bc2d-cedc2615bbb3",
+              "name": "=customer_name ",
+              "value": "={{ $json.body.customer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "5efd2409-9c69-4871-aa43-65c619f6738f",
+              "name": "=recieved_at",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1024,
+        432
+      ],
+      "id": "cf02210d-34bb-46df-84b6-933054094552",
+      "name": "Prepare invalid status logs "
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5d42d3b2-3714-4d92-851d-829e36c69a60",
+              "leftValue": "={{ $json.body.status }}",
+              "rightValue": "pending ",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        368
+      ],
+      "id": "7dd930ef-0fb3-49bf-98c2-a58e95bb9c55",
+      "name": "If1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Customer Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Customer Email": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare invalid status logs ": {
+      "main": [
+        []
+      ]
+    },
+    "If1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Prepare invalid status logs ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d0e945b0-96ee-411a-8105-fefa3d117771",
+  "meta": {
+    "instanceId": "a9e97a14ede75ccf842b4932cc58998f3b2868cedd26ae52bea483fcc3e0bd2e"
+  },
+  "nodeGroups": [],
+  "id": "Yfz1EokLwCxHr4tj",
+  "tags": []
+}
